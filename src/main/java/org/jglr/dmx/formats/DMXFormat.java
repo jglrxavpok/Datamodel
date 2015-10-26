@@ -1,10 +1,26 @@
 package org.jglr.dmx.formats;
 
-public abstract class DMXFormat {
+public class DMXFormat {
 
-    public abstract String getName();
+    private String name;
+    private int version;
 
-    public abstract int getVersion();
+    public DMXFormat() {
+
+    }
+
+    public DMXFormat(String name, int version) {
+        this.name = name;
+        this.version = version;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getVersion() {
+        return version;
+    }
 
     @Override
     public boolean equals(Object obj) {

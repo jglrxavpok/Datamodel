@@ -13,7 +13,7 @@ public final class DMXCodecRegistry {
 
     private DMXCodecRegistry() {
         registry = new HashMap<>();
-        registerCodec(new FormatModel1(), new Binary5Codec());
+        registerCodec(new FormatModel1(), new BinaryModelCodec());
     }
 
     public void registerCodec(DMXFormat format, DMXCodec codec) {
