@@ -1,7 +1,7 @@
 package org.jglr.dmx.codecs;
 
 import org.jglr.dmx.Datamodel;
-import org.jglr.dmx.MalformedMDXFile;
+import org.jglr.dmx.MalformedMDXException;
 import org.jglr.dmx.formats.DMXFormat;
 
 import java.io.IOException;
@@ -24,5 +24,5 @@ public abstract class DMXCodec {
 
     public abstract byte[] encode(int encodingVersion, DMXFormat format, Datamodel model);
 
-    public abstract Datamodel decode(int encodingVersion, DMXFormat format, InputStream input) throws IOException, MalformedMDXFile;
+    public abstract Datamodel decode(int encodingVersion, DMXFormat format, InputStream input) throws IOException, MalformedMDXException;
 }

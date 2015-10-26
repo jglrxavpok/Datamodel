@@ -1,7 +1,7 @@
 package org.jglr.dmx.codecs;
 
 import org.jglr.dmx.Datamodel;
-import org.jglr.dmx.MalformedMDXFile;
+import org.jglr.dmx.MalformedMDXException;
 import org.jglr.dmx.formats.DMXFormat;
 import org.jglr.dmx.formats.FormatModel1;
 
@@ -77,7 +77,7 @@ public class Binary5Codec extends DMXCodec {
     }
 
     @Override
-    public Datamodel decode(int encodingVersion, DMXFormat format, InputStream input) throws IOException, MalformedMDXFile {
+    public Datamodel decode(int encodingVersion, DMXFormat format, InputStream input) throws IOException, MalformedMDXException {
         DataInputStream in = new DataInputStream(new BufferedInputStream(input));
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -98,10 +98,10 @@ public class Binary5Codec extends DMXCodec {
                 System.out.println(matcher.group(1));
                 System.out.println(matcher.group(2));
             } else {
-                throw new MalformedMDXFile("Missing format informations, invalid header: "+header);
+                throw new MalformedMDXException("Missing format informations, invalid header: "+header);
             }
         } else {
-            throw new MalformedMDXFile("Missing format informations, invalid header: "+header);
+            throw new MalformedMDXException("Missing format informations, invalid header: "+header);
         }
         return null;
     }
