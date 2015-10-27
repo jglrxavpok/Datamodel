@@ -1,7 +1,8 @@
-package org.jglr.dmx;
+package org.jglr.dmx.attributes;
+
+import org.jglr.dmx.Datamodel;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 
 public class AttributeList extends ArrayList<Attribute> {
 

@@ -1,4 +1,4 @@
-package org.jglr.dmx.attrvalues;
+package org.jglr.dmx.attributes;
 
 import java.lang.reflect.Type;
 
@@ -18,5 +18,10 @@ public class AttributeValue {
 
     public Object getValue() {
         return value;
+    }
+
+    @Override
+    public String toString() {
+        return ""+value;
     }
 }

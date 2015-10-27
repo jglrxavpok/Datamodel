@@ -1,4 +1,6 @@
-package org.jglr.dmx;
+package org.jglr.dmx.element;
+
+import org.jglr.dmx.Datamodel;
 
 import java.util.ArrayList;
 

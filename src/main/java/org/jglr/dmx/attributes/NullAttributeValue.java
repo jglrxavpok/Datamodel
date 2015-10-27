@@ -1,6 +1,4 @@
-package org.jglr.dmx.attrvalues;
-
-import java.lang.reflect.Type;
+package org.jglr.dmx.attributes;
 
 public class NullAttributeValue extends AttributeValue {
 

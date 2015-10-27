@@ -1,7 +1,4 @@
-package org.jglr.dmx;
-
-import org.jglr.dmx.attrvalues.AttributeValue;
-import org.jglr.dmx.attrvalues.NullAttributeValue;
+package org.jglr.dmx.attributes;
 
 public class Attribute {
 
