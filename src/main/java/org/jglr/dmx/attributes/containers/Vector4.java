@@ -1,5 +1,10 @@
 package org.jglr.dmx.attributes.containers;
 
+/**
+ * Represents a vector composed of 4 components: x, y, z, w
+ * <br/>
+ * <b>Warning: </b>Vector4 is only a container, you should back it with your equivalent Vector objects
+ */
 public class Vector4 {
 
     private final float x;

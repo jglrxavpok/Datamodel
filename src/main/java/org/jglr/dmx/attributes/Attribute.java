@@ -1,5 +1,10 @@
 package org.jglr.dmx.attributes;
 
+/**
+ * An attribute is a property of an {@link org.jglr.dmx.element.Element Element}. It has a name, a type and a value.
+ *
+ * The type is actually embedded in the {@link Attribute#value value field}.
+ */
 public class Attribute {
 
     private final String name;

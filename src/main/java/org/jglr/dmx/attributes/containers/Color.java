@@ -1,5 +1,10 @@
 package org.jglr.dmx.attributes.containers;
 
+/**
+ * Represents a color composed of red, blue and green light.
+ * There is an extra component for opacity (alpha).
+ * Each component ranges from 0 to 255 (included).
+ */
 public class Color {
 
     private final int red;
@@ -28,6 +33,14 @@ public class Color {
 
     public int getRed() {
         return red;
+    }
+
+    public int toRGBAInt() {
+        return red << 24 | green << 16 | blue << 8 | alpha;
+    }
+
+    public int toARGBInt() {
+        return alpha << 24 | red << 16 | green << 8 | blue;
     }
 
     @Override

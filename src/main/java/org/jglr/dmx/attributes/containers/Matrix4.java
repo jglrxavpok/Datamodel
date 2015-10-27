@@ -2,6 +2,12 @@ package org.jglr.dmx.attributes.containers;
 
 import java.util.Arrays;
 
+/**
+ * Represents a 4x4 matrix.
+ * The order is format-dependant.
+ * <br/>
+ * <b>Warning: </b>Matrix4 is only a container, you should back it with your equivalent Matrix objects
+ */
 public class Matrix4 {
 
     private final float[] raw;

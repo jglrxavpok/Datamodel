@@ -4,12 +4,12 @@ import org.jglr.dmx.Datamodel;
 import org.jglr.dmx.attributes.containers.*;
 import org.jglr.dmx.element.Element;
 
-import java.io.DataInputStream;
 import java.io.Reader;
 import java.util.function.BiFunction;
 
-import static org.jglr.dmx.utils.IOUtils.*;
-
+/**
+ * List of all possible types for an {@link Attribute}
+ */
 public enum EnumAttributeTypes {
     UNKNOWN(0, Void.class, (datamodel, in) -> null),
     FIRST_VALUE_TYPE(1, Void.class, (datamodel, in) -> null),
@@ -49,13 +49,13 @@ public enum EnumAttributeTypes {
     public static final int TYPE_COUNT = 29;
 
     private int value;
-    private BiFunction<Datamodel, Reader, Object> func;
+    private BiFunction<Datamodel, Reader, Object> extractor;
     private Class<?> type;
 
-    EnumAttributeTypes(int value, Class<?> type, BiFunction<Datamodel, Reader, Object> func) {
+    EnumAttributeTypes(int value, Class<?> type, BiFunction<Datamodel, Reader, Object> extractor) {
         this.value = value;
         this.type = type;
-        this.func = func;
+        this.extractor = extractor;
     }
 
     public int value() {
@@ -64,9 +64,8 @@ public enum EnumAttributeTypes {
 
     public static EnumAttributeTypes getType(int id) {
         for(EnumAttributeTypes t : values()) {
-            if(t != FIRST_ARRAY_TYPE && t != FIRST_VALUE_TYPE)
-                if(t.value == (int)id)
-                    return t;
+            if(t != FIRST_ARRAY_TYPE && t != FIRST_VALUE_TYPE && t.value == id)
+                return t;
         }
         return UNKNOWN;
     }
@@ -75,7 +74,10 @@ public enum EnumAttributeTypes {
         return type;
     }
 
-    public AttributeValue handle(Datamodel datamodel, Reader in) {
-        return new AttributeValue(type, func.apply(datamodel, in));
+    /**
+     * Extracts a value from the reader
+     */
+    public AttributeValue extract(Datamodel datamodel, Reader in) {
+        return new AttributeValue(type, extractor.apply(datamodel, in));
     }
 }

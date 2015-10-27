@@ -12,8 +12,28 @@ import java.util.UUID;
 
 import static org.jglr.dmx.utils.IOUtils.*;
 
+/**
+ * Utils class used to extract attribute values from a Reader. Due to its use in {@link EnumAttributeTypes} constructors,
+ * it returns default values if an {@link IOException} happens.
+ */
 public final class AttributeExtraction {
 
+    /**
+     * Extracts an {@link Element} from the stream represented by the Reader.<br/>
+     * Starts by reading an int.<br/>
+     * If this int
+     * <ul>
+     *     <li>is equal to -1, the element does not exist, the method returns null</lu>
+     *     <li>is equal to -2, the element existed but is not in the file, a stub element is therefore generated</lu>
+     *     <li>a positive number, the element is the one with an index equal to this int in the element list of the datamodel</lu>
+     * </ul>
+     * @param model
+     *             The datamodel currently being loaded
+     * @param in
+     *          The Reader from which to extract the value
+     * @return
+     *      An Element instance, or null if couldn't read one.
+     */
     public static Element extractElement(Datamodel model, Reader in) {
         try {
             int id = readLittleEndianInt(in);
@@ -30,6 +50,15 @@ public final class AttributeExtraction {
         return null;
     }
 
+    /**
+     * Reads an int from the stream. It seems ints are stored the little-endian way by Blender (or part of the DMX format?).
+     * @param model
+     *              The datamodel currently being loaded
+     * @param in
+     *          The reader from which to extract the value
+     * @return
+     *        An int
+     */
     public static int extractInt(Datamodel model, Reader in) {
         try {
             return readLittleEndianInt(in);
@@ -39,6 +68,15 @@ public final class AttributeExtraction {
         return 0;
     }
 
+    /**
+     * Reads a float from the stream.
+     * @param model
+     *              The datamodel currently being loaded
+     * @param in
+     *          The reader from which to extract the value
+     * @return
+     *        A float
+     */
     public static float extractFloat(Datamodel model, Reader in) {
         try {
             return readFloat(in);
@@ -48,6 +86,15 @@ public final class AttributeExtraction {
         return 0f;
     }
 
+    /**
+     * Reads a boolean from the stream. A boolean actually takes a whole byte instead of a bit.
+     * @param model
+     *              The datamodel currently being loaded
+     * @param in
+     *          The reader from which to extract the value
+     * @return
+     *        A boolean
+     */
     public static boolean extractBool(Datamodel model, Reader in) {
         try {
             return readBool(in);
@@ -57,15 +104,33 @@ public final class AttributeExtraction {
         return false;
     }
 
+    /**
+     * Reads a char (from the C language specification) from the stream.
+     * @param model
+     *              The datamodel currently being loaded
+     * @param in
+     *          The reader from which to extract the value
+     * @return
+     *        A C-char, actually just a byte
+     */
     public static int extractCChar(Datamodel model, Reader in) {
         try {
-            return readByte(in);
+            return (int)readByte(in);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return -1;
+        return 0;
     }
 
+    /**
+     * Reads a String instance from the stream. An index is first read and the String is then fetched from the string directory of the datamodel.
+     * @param model
+     *              The datamodel currently being loaded
+     * @param in
+     *          The reader from which to extract the value
+     * @return
+     *        A String instance
+     */
     public static String extractString(Datamodel model, Reader in) {
         try {
             int index = readLittleEndianInt(in);
@@ -76,30 +141,93 @@ public final class AttributeExtraction {
         return null;
     }
 
+    /**
+     * Reads a color from the stream. A color is written as 4 tightly-packed floats in the RGBA format.
+     * @param model
+     *              The datamodel currently being loaded
+     * @param in
+     *          The reader from which to extract the value
+     * @return
+     *        A color
+     */
     public static Color extractColor(Datamodel model, Reader in) {
         return new Color(extractCChar(model, in), extractCChar(model, in), extractCChar(model, in), extractCChar(model, in));
     }
 
+    /**
+     * Reads a 2 dimensional vector from the stream. A 2 dimensional vector is written as 2 tightly-packed floats for each of the components.
+     * @param model
+     *              The datamodel currently being loaded
+     * @param in
+     *          The reader from which to extract the value
+     * @return
+     *        A 2 dimensional vector
+     */
     public static Vector2 extractVec2(Datamodel model, Reader in) {
         return new Vector2(readFloatVector(in, 2));
     }
 
+    /**
+     * Reads a 3 dimensional vector from the stream. A 3 dimensional vector is written as 3 tightly-packed floats for each of the components.
+     * @param model
+     *              The datamodel currently being loaded
+     * @param in
+     *          The reader from which to extract the value
+     * @return
+     *        A 3 dimensional vector
+     */
     public static Vector3 extractVec3(Datamodel model, Reader in) {
         return new Vector3(readFloatVector(in, 3));
     }
 
+    /**
+     * Reads a pitch/yaw/roll angle from the stream. An angle is written as 3 tightly-packed floats for each of the components.
+     * @param model
+     *              The datamodel currently being loaded
+     * @param in
+     *          The reader from which to extract the value
+     * @return
+     *        A pitch/yaw/roll angle
+     */
     public static Angle extractAngle(Datamodel model, Reader in) {
         return new Angle(readFloatVector(in, 3));
     }
 
+    /**
+     * Reads a 4 dimensional vector from the stream. A 4 dimensional vector is written as 4 tightly-packed floats for each of the components.
+     * @param model
+     *              The datamodel currently being loaded
+     * @param in
+     *          The reader from which to extract the value
+     * @return
+     *        A 4 dimensional vector
+     */
     public static Vector4 extractVec4(Datamodel model, Reader in) {
         return new Vector4(readFloatVector(in, 4));
     }
 
+    /**
+     * Reads a quaternion from the stream. A quaternion is written as 4 tightly-packed floats for each of the components.
+     * @param model
+     *              The datamodel currently being loaded
+     * @param in
+     *          The reader from which to extract the value
+     * @return
+     *        A 3 dimensional vector
+     */
     public static Quaternion extractQuat(Datamodel model, Reader in) {
         return new Quaternion(readFloatVector(in, 4));
     }
 
+    /**
+     * Reads a 4x4 matrix from the stream. A 4x4 matrix is written as 16 tightly-packed floats for each of the components.
+     * @param model
+     *              The datamodel currently being loaded
+     * @param in
+     *          The reader from which to extract the value
+     * @return
+     *        A 4x4 matrix
+     */
     public static Matrix4 extractMat(Datamodel model, Reader in) {
         return new Matrix4(readFloatVector(in, 4*4));
     }
@@ -118,6 +246,10 @@ public final class AttributeExtraction {
     }
 
     // Start of attribute arrays
+
+    /**
+     * Extracts an array of Elements from the reader
+     */
     public static Element[] extractElementArray(Datamodel model, Reader in) {
         try {
             Element[] arr = new Element[readLittleEndianInt(in)];
@@ -129,6 +261,9 @@ public final class AttributeExtraction {
         return null;
     }
 
+    /**
+     * Extracts an array of ints from the reader
+     */
     public static int[] extractIntArray(Datamodel model, Reader in) {
         try {
             Integer[] arr = new Integer[readLittleEndianInt(in)];
@@ -145,6 +280,9 @@ public final class AttributeExtraction {
         return null;
     }
 
+    /**
+     * Extracts an array of floats from the reader
+     */
     public static float[] extractFloatArray(Datamodel model, Reader in) {
         try {
             Float[] arr = new Float[readLittleEndianInt(in)];
@@ -161,6 +299,9 @@ public final class AttributeExtraction {
         return null;
     }
 
+    /**
+     * Extracts an array of booleans from the reader
+     */
     public static boolean[] extractBoolArray(Datamodel model, Reader in) {
         try {
             Boolean[] arr = new Boolean[readLittleEndianInt(in)];
@@ -177,6 +318,9 @@ public final class AttributeExtraction {
         return null;
     }
 
+    /**
+     * Extracts an array of Colors from the reader
+     */
     public static Color[] extractColorArray(Datamodel model, Reader in) {
         try {
             Color[] arr = new Color[readLittleEndianInt(in)];
@@ -188,6 +332,9 @@ public final class AttributeExtraction {
         return null;
     }
 
+    /**
+     * Extracts an array of Vector2 from the reader
+     */
     public static Vector2[] extractVector2Array(Datamodel model, Reader in) {
         try {
             Vector2[] arr = new Vector2[readLittleEndianInt(in)];
@@ -199,6 +346,9 @@ public final class AttributeExtraction {
         return null;
     }
 
+    /**
+     * Extracts an array of Vector3 from the reader
+     */
     public static Vector3[] extractVector3Array(Datamodel model, Reader in) {
         try {
             Vector3[] arr = new Vector3[readLittleEndianInt(in)];
@@ -210,6 +360,9 @@ public final class AttributeExtraction {
         return null;
     }
 
+    /**
+     * Extracts an array of Vector4 from the reader
+     */
     public static Vector4[] extractVector4Array(Datamodel model, Reader in) {
         try {
             Vector4[] arr = new Vector4[readLittleEndianInt(in)];
@@ -221,6 +374,9 @@ public final class AttributeExtraction {
         return null;
     }
 
+    /**
+     * Extracts an array of Quaternion from the reader
+     */
     public static Quaternion[] extractQuaternionArray(Datamodel model, Reader in) {
         try {
             Quaternion[] arr = new Quaternion[readLittleEndianInt(in)];
@@ -232,6 +388,9 @@ public final class AttributeExtraction {
         return null;
     }
 
+    /**
+     * Extracts an array of Matrix from the reader
+     */
     public static Matrix4[] extractMatrix4Array(Datamodel model, Reader in) {
         try {
             Matrix4[] arr = new Matrix4[readLittleEndianInt(in)];
@@ -243,6 +402,9 @@ public final class AttributeExtraction {
         return null;
     }
 
+    /**
+     * Extracts an array of Angle from the reader
+     */
     public static Angle[] extractAngleArray(Datamodel model, Reader in) {
         try {
             Angle[] arr = new Angle[readLittleEndianInt(in)];
@@ -254,14 +416,15 @@ public final class AttributeExtraction {
         return null;
     }
 
+    /**
+     * Extracts an array of String from the reader
+     */
     public static String[] extractStringArray(Datamodel model, Reader in) {
         try {
             String[] arr = new String[readLittleEndianInt(in)];
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
             for(int i = 0;i<arr.length;i++) {
-                arr[i] = readNullTerminated(in, out);
+                arr[i] = readNullTerminated(in);
             }
-            out.close();
             return arr;
         } catch (IOException e) {
             e.printStackTrace();
@@ -272,7 +435,7 @@ public final class AttributeExtraction {
     @SuppressWarnings("unchecked")
     private static <T> void readAttributeArray(Datamodel model, Reader in, EnumAttributeTypes attrType, T[] out) {
         for(int i = 0;i<out.length;i++) {
-            out[i] = (T) attrType.handle(model, in).getValue();
+            out[i] = (T) attrType.extract(model, in).getValue();
         }
     }
 

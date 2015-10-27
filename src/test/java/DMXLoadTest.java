@@ -18,7 +18,9 @@ public class DMXLoadTest {
 
     @Test
     public void testLoad() throws IOException, DMXException {
-        InputStream model = getClass().getResourceAsStream("/Gun.dmx");
+        String modelPath = "Gun.dmx";
+        System.out.println("[DMX Testing] Test load of "+modelPath);
+        InputStream model = getClass().getResourceAsStream("/"+modelPath);
         DMXCodec codec = new BinaryModelCodec();
         Datamodel datamodel = codec.decode(codec.getSupportedBinaryVersions()[0], model);
     }

@@ -1,5 +1,9 @@
 package org.jglr.dmx.attributes.containers;
 
+/**
+ * Represents a pitch/yaw/roll angle.<br/>
+ * Each component is respectively represented by the x, y and z components of this object.
+ */
 public class Angle {
 
     private final float x;

@@ -1,5 +1,10 @@
 package org.jglr.dmx.attributes.containers;
 
+/**
+ * Represents a vector composed of 3 components: x, y, z
+ * <br/>
+ * <b>Warning: </b>Vector3 is only a container, you should back it with your equivalent Vector objects
+ */
 public class Vector3 {
 
     private final float x;

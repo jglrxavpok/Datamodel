@@ -1,5 +1,10 @@
 package org.jglr.dmx.attributes.containers;
 
+/**
+ * Represents a quaternion composed of 4 components: x, y, z, w.
+ * <br/>
+ * <b>Warning: </b>Quaternion is only a container, you should back it with your equivalent Quaternion objects
+ */
 public class Quaternion {
 
     private final float x;

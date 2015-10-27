@@ -4,6 +4,9 @@ import org.jglr.dmx.Datamodel;
 
 import java.util.ArrayList;
 
+/**
+ * A list of {@link Attribute}
+ */
 public class AttributeList extends ArrayList<Attribute> {
 
     private final Datamodel owner;

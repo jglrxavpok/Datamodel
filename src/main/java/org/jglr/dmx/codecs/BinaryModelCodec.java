@@ -1,7 +1,7 @@
 package org.jglr.dmx.codecs;
 
 import org.jglr.dmx.*;
-import org.jglr.dmx.attributes.AttributeExtraction;
+import org.jglr.dmx.attributes.Attribute;
 import org.jglr.dmx.attributes.AttributeValue;
 import org.jglr.dmx.attributes.EnumAttributeTypes;
 import org.jglr.dmx.element.Element;
@@ -89,20 +89,8 @@ public class BinaryModelCodec extends DMXCodec {
     public Datamodel decode(int encodingVersion, InputStream input) throws IOException, MalformedDMXException, UnsupportedDMXException {
         BufferedReader in = new BufferedReader(new InputStreamReader(new BufferedInputStream(input)));
 
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
         // Read header
-        String header = "";
-        while(true) {
-            header+=(char)in.read();
-            if(header.endsWith(">"))
-                break;
-        }
-        System.out.println(header);
-
-        in.skip(2);
-
-        //in.read();
-        //in.read();
+        String header = readNullTerminated(in);
 
         String headerRegex = Pattern.quote("<!-- dmx encoding binary ")+"([0-9]*?)"+Pattern.quote(" format ")+"(.*?) ([0-9]*?)"+Pattern.quote(" -->");
         Pattern pattern = Pattern.compile(headerRegex);
@@ -126,49 +114,63 @@ public class BinaryModelCodec extends DMXCodec {
 
         // Format and versions are fine, we can continue
 
-        int directorySize = readLittleEndianInt(in);
-        DMX.debug("Directory size: "+directorySize);
-        String[] directory = new String[directorySize];
+        int dictionarySize = readLittleEndianInt(in);
+        DMX.debug("Dictionary size: "+dictionarySize);
+        String[] dictionary = new String[dictionarySize];
 
-        // fill string directory
-        for(int i = 0;i<directorySize;i++) {
-            directory[i] = readNullTerminated(in, out);
-            DMX.debug("Added \"" + directory[i] + "\" into StrDirectory at index " + i);
+        // Fills string dictionnary
+        for(int i = 0;i<dictionarySize;i++) {
+            dictionary[i] = readNullTerminated(in);
+            DMX.debug("Added \"" + dictionary[i] + "\" into StrDictionary at index " + i);
         }
 
-        Datamodel datamodel = new Datamodel(this, directory);
+        Datamodel datamodel = new Datamodel(this, dictionary);
 
         int elements = readLittleEndianInt(in);
         DMX.debug("Found "+elements+" elements");
 
-        // Read main element
+        // Read elements
         for(int i = 0;i<elements;i++) {
-            Element element = readElement(datamodel, in, directory);
+            Element element = readElement(datamodel, in, dictionary);
             datamodel.getElementList().add(element);
         }
 
+        // Read element bodies, aka. their attributes
         for(Element elem : datamodel.getElementList()) {
             int attributeCount = readLittleEndianInt(in);
-            DMX.debug(elem.toString());
-            DMX.debug(">>"+attributeCount);
+            DMX.debug(elem.toString()+" has "+attributeCount+" attribute(s).");
 
             for(int i = 0;i<attributeCount;i++) {
-                // read attribute
-                String name = directory[readLittleEndianInt(in)];
+                // Read a single attribute
+                String name = dictionary[readLittleEndianInt(in)];
                 EnumAttributeTypes type = EnumAttributeTypes.getType(readByte(in));
-                AttributeValue value = type.handle(datamodel, in);
-                DMX.debug("Attribute: "+name+" = "+value);
+                AttributeValue value = type.extract(datamodel, in);
+                Attribute attribute = new Attribute(name, value, elem);
+                elem.add(attribute);
+                DMX.debug("Attribute("+i+"): "+name+" = "+value);
             }
         }
 
         return datamodel;
     }
 
-    private Element readElement(Datamodel datamodel, Reader in, String[] directory) throws IOException {
+    /**
+     * Reads a single element from the reader.
+     * @param datamodel
+     *                  The datamodel currently being loaded
+     * @param in
+     *          The reader from which to read the element
+     * @param dictionary
+     *                 The String dictionary
+     * @return
+     *      The read Element
+     * @throws IOException
+     */
+    private Element readElement(Datamodel datamodel, Reader in, String[] dictionary) throws IOException {
         int className = readLittleEndianInt(in);
         int name = readLittleEndianInt(in);
         byte[] uuid = readLittleEndianUUID(in);
-        Element element = new Element(datamodel, directory[name], directory[className], UUID.nameUUIDFromBytes(uuid));
+        Element element = new Element(datamodel, dictionary[name], dictionary[className], UUID.nameUUIDFromBytes(uuid));
         DMX.debug(element.toString());
         return element;
     }

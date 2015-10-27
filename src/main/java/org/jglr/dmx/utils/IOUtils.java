@@ -4,14 +4,15 @@ import java.io.*;
 
 public final class IOUtils {
 
-    public static String readNullTerminated(Reader in, ByteArrayOutputStream out) throws IOException {
+    public static String readNullTerminated(Reader in) throws IOException {
         byte b;
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
         while((b = readByte(in)) != 0) {
             out.write(b);
         }
         out.flush();
         String read = new String(out.toByteArray());
-        out.reset();
+        out.close();
         return read;
     }
 
