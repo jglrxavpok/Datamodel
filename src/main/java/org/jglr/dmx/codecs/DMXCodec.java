@@ -21,9 +21,7 @@ public abstract class DMXCodec {
 
     public abstract int[] getSupportedKeyValues2Versions();
 
-    public abstract boolean supportsFormat(DMXFormat format);
-
-    public abstract byte[] encode(int encodingVersion, DMXFormat format, Datamodel model);
+    public abstract byte[] encode(int encodingVersion, Datamodel model);
 
     public abstract Datamodel decode(int encodingVersion, InputStream input) throws IOException, MalformedDMXException, UnsupportedDMXException;
 
@@ -47,5 +45,10 @@ public abstract class DMXCodec {
                 return true;
         }
         return false;
+    }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName();
     }
 }

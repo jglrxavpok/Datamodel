@@ -45,4 +45,9 @@ public class DMXFormat {
         result = multiplier * result + getVersion();
         return result;
     }
+
+    @Override
+    public String toString() {
+        return name+" "+version;
+    }
 }

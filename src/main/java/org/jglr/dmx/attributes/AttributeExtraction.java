@@ -5,10 +5,8 @@ import org.jglr.dmx.attributes.containers.*;
 import org.jglr.dmx.element.Element;
 import org.jglr.dmx.element.StubElement;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.Reader;
 import java.util.UUID;
 
 import static org.jglr.dmx.utils.IOUtils.*;
@@ -135,7 +133,7 @@ public final class AttributeExtraction {
     public static String extractString(Datamodel model, InputStream in) {
         try {
             int index = readLittleEndianInt(in);
-            return model.getDirectory()[index];
+            return model.getDictionary()[index];
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -23,6 +23,7 @@ public class DMXLoadTest {
         InputStream model = getClass().getResourceAsStream("/"+modelPath);
         DMXCodec codec = new BinaryModelCodec();
         Datamodel datamodel = codec.decode(codec.getSupportedBinaryVersions()[0], model);
+        System.out.println("[DMX Testing] Datamodel object: "+datamodel);
     }
 
 }

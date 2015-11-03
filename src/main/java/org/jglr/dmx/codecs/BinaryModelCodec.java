@@ -6,7 +6,6 @@ import org.jglr.dmx.attributes.AttributeValue;
 import org.jglr.dmx.attributes.EnumAttributeTypes;
 import org.jglr.dmx.element.Element;
 import org.jglr.dmx.formats.DMXFormat;
-import org.jglr.dmx.formats.FormatModel1;
 
 import java.io.*;
 import java.util.UUID;
@@ -76,12 +75,7 @@ public class BinaryModelCodec extends DMXCodec {
     }
 
     @Override
-    public boolean supportsFormat(DMXFormat format) {
-        return FormatModel1.instance.equals(format);
-    }
-
-    @Override
-    public byte[] encode(int encodingVersion, DMXFormat format, Datamodel model) {
+    public byte[] encode(int encodingVersion, Datamodel model) {
         return new byte[0];
     }
 
@@ -90,8 +84,10 @@ public class BinaryModelCodec extends DMXCodec {
         BufferedInputStream in = new BufferedInputStream(input);
 
         // Read header
+        DMXFormat format = null;
         String header = readNullTerminated(in);
 
+        // TODO: Get rid of the encoding check, that needs to be done somewhere else
         String headerRegex = Pattern.quote("<!-- dmx encoding binary ")+"([0-9]*?)"+Pattern.quote(" format ")+"(.*?) ([0-9]*?)"+Pattern.quote(" -->");
         Pattern pattern = Pattern.compile(headerRegex);
         Matcher matcher = pattern.matcher(header);
@@ -101,10 +97,9 @@ public class BinaryModelCodec extends DMXCodec {
                 if(!supportsBinaryVersion(binaryVersion)) {
                     throw new UnsupportedDMXException("Binary version "+binaryVersion+" is not supported");
                 }
-                String format = matcher.group(2);
+                String formatName = matcher.group(2);
                 int formatVersion = Integer.parseInt(matcher.group(3));
-                if(!supportsFormat(new DMXFormat(format, formatVersion)))
-                    throw new UnsupportedDMXException("Format "+format+" of version "+formatVersion+" is not supported");
+                format = new DMXFormat(formatName, formatVersion);
             } else {
                 throw new MalformedDMXException("Missing format informations, invalid header: "+header);
             }
@@ -124,7 +119,7 @@ public class BinaryModelCodec extends DMXCodec {
             DMX.debug("Added \"" + dictionary[i] + "\" into StrDictionary at index " + i);
         }
 
-        Datamodel datamodel = new Datamodel(this, dictionary);
+        Datamodel datamodel = new Datamodel(this, format, dictionary);
 
         int elements = readLittleEndianInt(in);
         DMX.debug("Found "+elements+" elements");
