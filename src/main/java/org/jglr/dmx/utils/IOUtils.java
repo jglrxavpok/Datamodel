@@ -4,34 +4,35 @@ import java.io.*;
 
 public final class IOUtils {
 
-    public static String readNullTerminated(Reader in) throws IOException {
+    private static ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+    public static String readNullTerminated(InputStream in) throws IOException {
         byte b;
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
         while((b = readByte(in)) != 0) {
             out.write(b);
         }
         out.flush();
         String read = new String(out.toByteArray());
-        out.close();
+        out.reset();
         return read;
     }
 
-    public static float readFloat(Reader in) throws IOException {
+    public static float readFloat(InputStream in) throws IOException {
         return Float.intBitsToFloat(readBigEndianInt(in));
     }
 
-    public static boolean readBool(Reader in) throws IOException {
+    public static boolean readBool(InputStream in) throws IOException {
         return readByte(in) != 0;
     }
 
-    public static byte readByte(Reader in) throws IOException {
+    public static byte readByte(InputStream in) throws IOException {
         int val = in.read();
         if(val < 0)
             throw new EOFException();
         return (byte)val;
     }
 
-    public static int readBigEndianInt(Reader in) throws IOException {
+    public static int readBigEndianInt(InputStream in) throws IOException {
         byte a = readByte(in);
         byte b = readByte(in);
         byte c = readByte(in);
@@ -40,7 +41,7 @@ public final class IOUtils {
         return a << 24 | b << 16 | c << 8 | d;
     }
 
-    public static int readLittleEndianInt(Reader in) throws IOException {
+    public static int readLittleEndianInt(InputStream in) throws IOException {
         byte a = readByte(in);
         byte b = readByte(in);
         byte c = readByte(in);
@@ -49,7 +50,7 @@ public final class IOUtils {
         //return a << 24 | b << 16 | c << 8 | d;
     }
 
-    public static byte[] readLittleEndianIntBytes(Reader in) throws IOException {
+    public static byte[] readLittleEndianIntBytes(InputStream in) throws IOException {
         byte a = readByte(in);
         byte b = readByte(in);
         byte c = readByte(in);
@@ -57,7 +58,7 @@ public final class IOUtils {
         return new byte[] { d, c, b, a};
     }
 
-    public static byte[] readLittleEndianUUID(Reader in) throws IOException {
+    public static byte[] readLittleEndianUUID(InputStream in) throws IOException {
         byte[] a = readLittleEndianIntBytes(in);
         byte[] b = readLittleEndianIntBytes(in);
         byte[] c = readLittleEndianIntBytes(in);

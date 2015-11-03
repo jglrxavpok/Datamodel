@@ -7,6 +7,7 @@ import org.jglr.dmx.element.StubElement;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Reader;
 import java.util.UUID;
 
@@ -34,7 +35,7 @@ public final class AttributeExtraction {
      * @return
      *      An Element instance, or null if couldn't read one.
      */
-    public static Element extractElement(Datamodel model, Reader in) {
+    public static Element extractElement(Datamodel model, InputStream in) {
         try {
             int id = readLittleEndianInt(in);
             if(id == -1) {
@@ -59,7 +60,7 @@ public final class AttributeExtraction {
      * @return
      *        An int
      */
-    public static int extractInt(Datamodel model, Reader in) {
+    public static int extractInt(Datamodel model, InputStream in) {
         try {
             return readLittleEndianInt(in);
         } catch (IOException e) {
@@ -77,7 +78,7 @@ public final class AttributeExtraction {
      * @return
      *        A float
      */
-    public static float extractFloat(Datamodel model, Reader in) {
+    public static float extractFloat(Datamodel model, InputStream in) {
         try {
             return readFloat(in);
         } catch (IOException e) {
@@ -95,7 +96,7 @@ public final class AttributeExtraction {
      * @return
      *        A boolean
      */
-    public static boolean extractBool(Datamodel model, Reader in) {
+    public static boolean extractBool(Datamodel model, InputStream in) {
         try {
             return readBool(in);
         } catch (IOException e) {
@@ -113,13 +114,13 @@ public final class AttributeExtraction {
      * @return
      *        A C-char, actually just a byte
      */
-    public static int extractCChar(Datamodel model, Reader in) {
+    public static int extractCChar(Datamodel model, InputStream in) {
         try {
-            return (int)readByte(in);
+            return readByte(in);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return 0;
+        return -1;
     }
 
     /**
@@ -131,7 +132,7 @@ public final class AttributeExtraction {
      * @return
      *        A String instance
      */
-    public static String extractString(Datamodel model, Reader in) {
+    public static String extractString(Datamodel model, InputStream in) {
         try {
             int index = readLittleEndianInt(in);
             return model.getDirectory()[index];
@@ -150,7 +151,7 @@ public final class AttributeExtraction {
      * @return
      *        A color
      */
-    public static Color extractColor(Datamodel model, Reader in) {
+    public static Color extractColor(Datamodel model, InputStream in) {
         return new Color(extractCChar(model, in), extractCChar(model, in), extractCChar(model, in), extractCChar(model, in));
     }
 
@@ -163,7 +164,7 @@ public final class AttributeExtraction {
      * @return
      *        A 2 dimensional vector
      */
-    public static Vector2 extractVec2(Datamodel model, Reader in) {
+    public static Vector2 extractVec2(Datamodel model, InputStream in) {
         return new Vector2(readFloatVector(in, 2));
     }
 
@@ -176,7 +177,7 @@ public final class AttributeExtraction {
      * @return
      *        A 3 dimensional vector
      */
-    public static Vector3 extractVec3(Datamodel model, Reader in) {
+    public static Vector3 extractVec3(Datamodel model, InputStream in) {
         return new Vector3(readFloatVector(in, 3));
     }
 
@@ -189,7 +190,7 @@ public final class AttributeExtraction {
      * @return
      *        A pitch/yaw/roll angle
      */
-    public static Angle extractAngle(Datamodel model, Reader in) {
+    public static Angle extractAngle(Datamodel model, InputStream in) {
         return new Angle(readFloatVector(in, 3));
     }
 
@@ -202,7 +203,7 @@ public final class AttributeExtraction {
      * @return
      *        A 4 dimensional vector
      */
-    public static Vector4 extractVec4(Datamodel model, Reader in) {
+    public static Vector4 extractVec4(Datamodel model, InputStream in) {
         return new Vector4(readFloatVector(in, 4));
     }
 
@@ -215,7 +216,7 @@ public final class AttributeExtraction {
      * @return
      *        A 3 dimensional vector
      */
-    public static Quaternion extractQuat(Datamodel model, Reader in) {
+    public static Quaternion extractQuat(Datamodel model, InputStream in) {
         return new Quaternion(readFloatVector(in, 4));
     }
 
@@ -228,11 +229,11 @@ public final class AttributeExtraction {
      * @return
      *        A 4x4 matrix
      */
-    public static Matrix4 extractMat(Datamodel model, Reader in) {
+    public static Matrix4 extractMat(Datamodel model, InputStream in) {
         return new Matrix4(readFloatVector(in, 4*4));
     }
 
-    private static float[] readFloatVector(Reader in, int dimensions) {
+    private static float[] readFloatVector(InputStream in, int dimensions) {
         float[] res = new float[dimensions];
         for(int i = 0;i<dimensions;i++) {
             try {
@@ -250,7 +251,7 @@ public final class AttributeExtraction {
     /**
      * Extracts an array of Elements from the reader
      */
-    public static Element[] extractElementArray(Datamodel model, Reader in) {
+    public static Element[] extractElementArray(Datamodel model, InputStream in) {
         try {
             Element[] arr = new Element[readLittleEndianInt(in)];
             readAttributeArray(model, in, EnumAttributeTypes.ELEMENT, arr);
@@ -264,7 +265,7 @@ public final class AttributeExtraction {
     /**
      * Extracts an array of ints from the reader
      */
-    public static int[] extractIntArray(Datamodel model, Reader in) {
+    public static int[] extractIntArray(Datamodel model, InputStream in) {
         try {
             Integer[] arr = new Integer[readLittleEndianInt(in)];
             readAttributeArray(model, in, EnumAttributeTypes.INT, arr);
@@ -283,7 +284,7 @@ public final class AttributeExtraction {
     /**
      * Extracts an array of floats from the reader
      */
-    public static float[] extractFloatArray(Datamodel model, Reader in) {
+    public static float[] extractFloatArray(Datamodel model, InputStream in) {
         try {
             Float[] arr = new Float[readLittleEndianInt(in)];
             readAttributeArray(model, in, EnumAttributeTypes.FLOAT, arr);
@@ -302,7 +303,7 @@ public final class AttributeExtraction {
     /**
      * Extracts an array of booleans from the reader
      */
-    public static boolean[] extractBoolArray(Datamodel model, Reader in) {
+    public static boolean[] extractBoolArray(Datamodel model, InputStream in) {
         try {
             Boolean[] arr = new Boolean[readLittleEndianInt(in)];
             readAttributeArray(model, in, EnumAttributeTypes.BOOL, arr);
@@ -321,7 +322,7 @@ public final class AttributeExtraction {
     /**
      * Extracts an array of Colors from the reader
      */
-    public static Color[] extractColorArray(Datamodel model, Reader in) {
+    public static Color[] extractColorArray(Datamodel model, InputStream in) {
         try {
             Color[] arr = new Color[readLittleEndianInt(in)];
             readAttributeArray(model, in, EnumAttributeTypes.COLOR, arr);
@@ -335,7 +336,7 @@ public final class AttributeExtraction {
     /**
      * Extracts an array of Vector2 from the reader
      */
-    public static Vector2[] extractVector2Array(Datamodel model, Reader in) {
+    public static Vector2[] extractVector2Array(Datamodel model, InputStream in) {
         try {
             Vector2[] arr = new Vector2[readLittleEndianInt(in)];
             readAttributeArray(model, in, EnumAttributeTypes.VECTOR2, arr);
@@ -349,7 +350,7 @@ public final class AttributeExtraction {
     /**
      * Extracts an array of Vector3 from the reader
      */
-    public static Vector3[] extractVector3Array(Datamodel model, Reader in) {
+    public static Vector3[] extractVector3Array(Datamodel model, InputStream in) {
         try {
             Vector3[] arr = new Vector3[readLittleEndianInt(in)];
             readAttributeArray(model, in, EnumAttributeTypes.VECTOR3, arr);
@@ -363,7 +364,7 @@ public final class AttributeExtraction {
     /**
      * Extracts an array of Vector4 from the reader
      */
-    public static Vector4[] extractVector4Array(Datamodel model, Reader in) {
+    public static Vector4[] extractVector4Array(Datamodel model, InputStream in) {
         try {
             Vector4[] arr = new Vector4[readLittleEndianInt(in)];
             readAttributeArray(model, in, EnumAttributeTypes.VECTOR4, arr);
@@ -377,7 +378,7 @@ public final class AttributeExtraction {
     /**
      * Extracts an array of Quaternion from the reader
      */
-    public static Quaternion[] extractQuaternionArray(Datamodel model, Reader in) {
+    public static Quaternion[] extractQuaternionArray(Datamodel model, InputStream in) {
         try {
             Quaternion[] arr = new Quaternion[readLittleEndianInt(in)];
             readAttributeArray(model, in, EnumAttributeTypes.QUATERNION, arr);
@@ -391,7 +392,7 @@ public final class AttributeExtraction {
     /**
      * Extracts an array of Matrix from the reader
      */
-    public static Matrix4[] extractMatrix4Array(Datamodel model, Reader in) {
+    public static Matrix4[] extractMatrix4Array(Datamodel model, InputStream in) {
         try {
             Matrix4[] arr = new Matrix4[readLittleEndianInt(in)];
             readAttributeArray(model, in, EnumAttributeTypes.VMATRIX, arr);
@@ -405,7 +406,7 @@ public final class AttributeExtraction {
     /**
      * Extracts an array of Angle from the reader
      */
-    public static Angle[] extractAngleArray(Datamodel model, Reader in) {
+    public static Angle[] extractAngleArray(Datamodel model, InputStream in) {
         try {
             Angle[] arr = new Angle[readLittleEndianInt(in)];
             readAttributeArray(model, in, EnumAttributeTypes.QANGLE, arr);
@@ -419,7 +420,7 @@ public final class AttributeExtraction {
     /**
      * Extracts an array of String from the reader
      */
-    public static String[] extractStringArray(Datamodel model, Reader in) {
+    public static String[] extractStringArray(Datamodel model, InputStream in) {
         try {
             String[] arr = new String[readLittleEndianInt(in)];
             for(int i = 0;i<arr.length;i++) {
@@ -433,7 +434,7 @@ public final class AttributeExtraction {
     }
 
     @SuppressWarnings("unchecked")
-    private static <T> void readAttributeArray(Datamodel model, Reader in, EnumAttributeTypes attrType, T[] out) {
+    private static <T> void readAttributeArray(Datamodel model, InputStream in, EnumAttributeTypes attrType, T[] out) {
         for(int i = 0;i<out.length;i++) {
             out[i] = (T) attrType.extract(model, in).getValue();
         }

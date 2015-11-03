@@ -87,7 +87,7 @@ public class BinaryModelCodec extends DMXCodec {
 
     @Override
     public Datamodel decode(int encodingVersion, InputStream input) throws IOException, MalformedDMXException, UnsupportedDMXException {
-        BufferedReader in = new BufferedReader(new InputStreamReader(new BufferedInputStream(input)));
+        BufferedInputStream in = new BufferedInputStream(input);
 
         // Read header
         String header = readNullTerminated(in);
@@ -166,7 +166,7 @@ public class BinaryModelCodec extends DMXCodec {
      *      The read Element
      * @throws IOException
      */
-    private Element readElement(Datamodel datamodel, Reader in, String[] dictionary) throws IOException {
+    private Element readElement(Datamodel datamodel, InputStream in, String[] dictionary) throws IOException {
         int className = readLittleEndianInt(in);
         int name = readLittleEndianInt(in);
         byte[] uuid = readLittleEndianUUID(in);

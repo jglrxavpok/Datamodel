@@ -4,6 +4,7 @@ import org.jglr.dmx.Datamodel;
 import org.jglr.dmx.attributes.containers.*;
 import org.jglr.dmx.element.Element;
 
+import java.io.InputStream;
 import java.io.Reader;
 import java.util.function.BiFunction;
 
@@ -49,10 +50,10 @@ public enum EnumAttributeTypes {
     public static final int TYPE_COUNT = 29;
 
     private int value;
-    private BiFunction<Datamodel, Reader, Object> extractor;
+    private BiFunction<Datamodel, InputStream, Object> extractor;
     private Class<?> type;
 
-    EnumAttributeTypes(int value, Class<?> type, BiFunction<Datamodel, Reader, Object> extractor) {
+    EnumAttributeTypes(int value, Class<?> type, BiFunction<Datamodel, InputStream, Object> extractor) {
         this.value = value;
         this.type = type;
         this.extractor = extractor;
@@ -77,7 +78,7 @@ public enum EnumAttributeTypes {
     /**
      * Extracts a value from the reader
      */
-    public AttributeValue extract(Datamodel datamodel, Reader in) {
+    public AttributeValue extract(Datamodel datamodel, InputStream in) {
         return new AttributeValue(type, extractor.apply(datamodel, in));
     }
 }
