@@ -6,7 +6,7 @@ public class DMXFormat {
     private int version;
 
     public DMXFormat() {
-
+        this("", 0);
     }
 
     public DMXFormat(String name, int version) {

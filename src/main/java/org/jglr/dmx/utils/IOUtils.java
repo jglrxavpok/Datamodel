@@ -4,16 +4,15 @@ import java.io.*;
 
 public final class IOUtils {
 
-    private static ByteArrayOutputStream out = new ByteArrayOutputStream();
-
     public static String readNullTerminated(InputStream in) throws IOException {
         byte b;
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
         while((b = readByte(in)) != 0) {
             out.write(b);
         }
         out.flush();
         String read = new String(out.toByteArray());
-        out.reset();
+        out.close();
         return read;
     }
 
@@ -38,7 +37,7 @@ public final class IOUtils {
         byte c = readByte(in);
         byte d = readByte(in);
         //return (d << 24) | (c << 16) | (b << 8) | a;
-        return a << 24 | b << 16 | c << 8 | d;
+        return (a << 24) | (b << 16) | (c << 8) | d;
     }
 
     public static int readLittleEndianInt(InputStream in) throws IOException {

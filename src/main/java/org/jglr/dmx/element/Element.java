@@ -69,6 +69,6 @@ public class Element extends AttributeList {
 
     @Override
     public String toString() {
-        return "Element<"+className+"> ("+owner+", "+name+", "+uuid+") ";
+        return "Element<"+className+"> ("+owner+", "+name+", "+uuid+")";
     }
 }

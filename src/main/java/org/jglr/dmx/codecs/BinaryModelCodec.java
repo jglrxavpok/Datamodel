@@ -8,6 +8,7 @@ import org.jglr.dmx.element.Element;
 import org.jglr.dmx.formats.DMXFormat;
 
 import java.io.*;
+import java.util.Arrays;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -142,7 +143,8 @@ public class BinaryModelCodec extends DMXCodec {
                 AttributeValue value = type.extract(datamodel, in);
                 Attribute attribute = new Attribute(name, value, elem);
                 elem.add(attribute);
-                DMX.debug("Attribute("+i+"): "+name+" = "+value);
+                String strValue = DMX.toString(value.getValue());
+                DMX.debug("Attribute("+i+"): "+name+" = "+strValue);
             }
         }
 

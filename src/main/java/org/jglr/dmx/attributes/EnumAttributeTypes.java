@@ -12,39 +12,39 @@ import java.util.function.BiFunction;
  * List of all possible types for an {@link Attribute}
  */
 public enum EnumAttributeTypes {
-    UNKNOWN(0, Void.class, (datamodel, in) -> null),
-    FIRST_VALUE_TYPE(1, Void.class, (datamodel, in) -> null),
-    ELEMENT(FIRST_VALUE_TYPE.value(), Element.class, AttributeExtraction::extractElement),
-    INT(2, Integer.TYPE, AttributeExtraction::extractInt),
-    FLOAT(3, Float.TYPE, AttributeExtraction::extractFloat),
-    BOOL(4, Boolean.class, AttributeExtraction::extractBool),
-    STRING(5, String.class, AttributeExtraction::extractString),
-    VOID(6, Void.class, (datamodel, in) -> null),
-    TIME(7, Float.TYPE, AttributeExtraction::extractFloat),
-    COLOR(8, Color.class, AttributeExtraction::extractColor), //rgba
-    VECTOR2(9, Vector2.class, AttributeExtraction::extractVec2),
-    VECTOR3(10, Vector3.class, AttributeExtraction::extractVec3),
-    VECTOR4(11, Vector4.class, AttributeExtraction::extractVec4),
-    QANGLE(12, Angle.class, AttributeExtraction::extractAngle),
-    QUATERNION(13, Quaternion.class, AttributeExtraction::extractQuat),
-    VMATRIX(14, Matrix4.class, AttributeExtraction::extractMat),
+    UNKNOWN(0, Void.class, (datamodel, in) -> null, false),
+    FIRST_VALUE_TYPE(1, Void.class, (datamodel, in) -> null, false),
+    ELEMENT(FIRST_VALUE_TYPE.value(), Element.class, AttributeExtraction::extractElement, false),
+    INT(2, Integer.TYPE, AttributeExtraction::extractInt, false),
+    FLOAT(3, Float.TYPE, AttributeExtraction::extractFloat, false),
+    BOOL(4, Boolean.class, AttributeExtraction::extractBool, false),
+    STRING(5, String.class, AttributeExtraction::extractString, false),
+    VOID(6, Void.class, (datamodel, in) -> null, false),
+    TIME(7, Float.TYPE, AttributeExtraction::extractFloat, false),
+    COLOR(8, Color.class, AttributeExtraction::extractColor, false), //rgba
+    VECTOR2(9, Vector2.class, AttributeExtraction::extractVec2, false),
+    VECTOR3(10, Vector3.class, AttributeExtraction::extractVec3, false),
+    VECTOR4(11, Vector4.class, AttributeExtraction::extractVec4, false),
+    QANGLE(12, Angle.class, AttributeExtraction::extractAngle, false),
+    QUATERNION(13, Quaternion.class, AttributeExtraction::extractQuat, false),
+    VMATRIX(14, Matrix4.class, AttributeExtraction::extractMat, false),
 
-    FIRST_ARRAY_TYPE(15, Void.class, (datamodel, dataInputStream) -> null),
+    FIRST_ARRAY_TYPE(15, Void.class, (datamodel, dataInputStream) -> null, true),
 
-    ELEMENT_ARRAY(FIRST_ARRAY_TYPE.value(), Element[].class, AttributeExtraction::extractElementArray),
-    INT_ARRAY(16, int[].class, AttributeExtraction::extractIntArray),
-    FLOAT_ARRAY(17, float[].class, AttributeExtraction::extractFloatArray),
-    BOOL_ARRAY(18, boolean[].class, AttributeExtraction::extractBoolArray),
-    STRING_ARRAY(19, String[].class, AttributeExtraction::extractStringArray),
-    VOID_ARRAY(20, Void[].class, (datamodel, dataInputStream) -> new Void[0]),
-    TIME_ARRAY(21, Float[].class, AttributeExtraction::extractFloatArray),
-    COLOR_ARRAY(22, Color[].class, AttributeExtraction::extractColorArray),
-    VECTOR2_ARRAY(23, Vector2[].class, AttributeExtraction::extractVector2Array),
-    VECTOR3_ARRAY(24, Vector3[].class, AttributeExtraction::extractVector3Array),
-    VECTOR4_ARRAY(25, Vector4[].class, AttributeExtraction::extractVector4Array),
-    QANGLE_ARRAY(26, Angle[].class, AttributeExtraction::extractAngleArray),
-    QUATERNION_ARRAY(27, Quaternion[].class, AttributeExtraction::extractQuaternionArray),
-    VMATRIX_ARRAY(28, Matrix4[].class, AttributeExtraction::extractMatrix4Array);
+    ELEMENT_ARRAY(FIRST_ARRAY_TYPE.value(), Element[].class, AttributeExtraction::extractElementArray, true),
+    INT_ARRAY(16, int[].class, AttributeExtraction::extractIntArray, true),
+    FLOAT_ARRAY(17, float[].class, AttributeExtraction::extractFloatArray, true),
+    BOOL_ARRAY(18, boolean[].class, AttributeExtraction::extractBoolArray, true),
+    STRING_ARRAY(19, String[].class, AttributeExtraction::extractStringArray, true),
+    VOID_ARRAY(20, Void[].class, (datamodel, dataInputStream) -> new Void[0], true),
+    TIME_ARRAY(21, Float[].class, AttributeExtraction::extractFloatArray, true),
+    COLOR_ARRAY(22, Color[].class, AttributeExtraction::extractColorArray, true),
+    VECTOR2_ARRAY(23, Vector2[].class, AttributeExtraction::extractVector2Array, true),
+    VECTOR3_ARRAY(24, Vector3[].class, AttributeExtraction::extractVector3Array, true),
+    VECTOR4_ARRAY(25, Vector4[].class, AttributeExtraction::extractVector4Array, true),
+    QANGLE_ARRAY(26, Angle[].class, AttributeExtraction::extractAngleArray, true),
+    QUATERNION_ARRAY(27, Quaternion[].class, AttributeExtraction::extractQuaternionArray, true),
+    VMATRIX_ARRAY(28, Matrix4[].class, AttributeExtraction::extractMatrix4Array, true);
 
 
     public static final int TYPE_COUNT = 29;
@@ -52,11 +52,13 @@ public enum EnumAttributeTypes {
     private int value;
     private BiFunction<Datamodel, InputStream, Object> extractor;
     private Class<?> type;
+    private boolean array;
 
-    EnumAttributeTypes(int value, Class<?> type, BiFunction<Datamodel, InputStream, Object> extractor) {
+    EnumAttributeTypes(int value, Class<?> type, BiFunction<Datamodel, InputStream, Object> extractor, boolean array) {
         this.value = value;
         this.type = type;
         this.extractor = extractor;
+        this.array = array;
     }
 
     public int value() {
@@ -80,5 +82,13 @@ public enum EnumAttributeTypes {
      */
     public AttributeValue extract(Datamodel datamodel, InputStream in) {
         return new AttributeValue(type, extractor.apply(datamodel, in));
+    }
+
+    public boolean isArray() {
+        return array;
+    }
+
+    public void setArray(boolean array) {
+        this.array = array;
     }
 }

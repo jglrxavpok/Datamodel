@@ -133,7 +133,7 @@ public final class AttributeExtraction {
     public static String extractString(Datamodel model, InputStream in) {
         try {
             int index = readLittleEndianInt(in);
-            return model.getDictionary()[index];
+            return model.getDictionary().get(index);
         } catch (IOException e) {
             e.printStackTrace();
         }
