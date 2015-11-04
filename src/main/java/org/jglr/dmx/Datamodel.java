@@ -1,13 +1,17 @@
 package org.jglr.dmx;
 
+import org.jglr.dmx.attributes.Attribute;
 import org.jglr.dmx.attributes.AttributeList;
 import org.jglr.dmx.codecs.DMXCodec;
+import org.jglr.dmx.element.Element;
 import org.jglr.dmx.element.ElementList;
 import org.jglr.dmx.formats.DMXFormat;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 public class Datamodel {
 
@@ -44,6 +48,40 @@ public class Datamodel {
         prefixList = new AttributeList(this);
     }
 
+    public Element createElement() {
+        return createElement("StubElement");
+    }
+
+    public Element createElement(String name) {
+        return createElement(name, (UUID)null);
+    }
+
+    public Element createElement(String name, @Nullable UUID uuid) {
+        return createElement(name, "DmElement", uuid);
+    }
+
+    public Element createElement(String name, String className) {
+        return createElement(name, className, null);
+    }
+
+    public Element createElement(String name, String className, @Nullable UUID uuid) {
+        return createElement(name, className, uuid, false);
+    }
+
+    public Element createElement(String name, String className, @Nullable UUID uuid, boolean stub) {
+        Element elem = new Element(this, name, className, uuid, stub);
+        addElement(elem);
+        return elem;
+    }
+
+    public Datamodel addElement(Element elem) {
+        if(elem.getOwner() != this) {
+            throw new IllegalArgumentException("Element does not have the same owner as the datamodel to which it was added");
+        }
+        getElementList().add(elem);
+        return this;
+    }
+
     public DMXCodec getCodec() {
         return codec;
     }
@@ -62,6 +100,36 @@ public class Datamodel {
 
     public DMXFormat getFormat() {
         return format;
+    }
+
+    public void refreshDictionary() {
+        dictionary.clear();
+        addAttrListToDict(getPrefixList());
+
+        // Add attribute names to the dictionary
+        getElementList().stream()
+                .forEach(this::addAttrListToDict);
+
+        // Add element names to the dictionary
+        getElementList().stream()
+                .map(Element::getName)
+                .forEach(this::addToDictIfNotPresent);
+
+        // Add element class names to the dictionary
+        getElementList().stream()
+                .map(Element::getClassName)
+                .forEach(this::addToDictIfNotPresent);
+    }
+
+    private void addAttrListToDict(AttributeList list) {
+        list.stream()
+                .map(Attribute::getName)
+                .forEach(this::addToDictIfNotPresent);
+    }
+
+    private void addToDictIfNotPresent(String val) {
+        if(!dictionary.contains(val))
+            dictionary.add(val);
     }
 
     @Override

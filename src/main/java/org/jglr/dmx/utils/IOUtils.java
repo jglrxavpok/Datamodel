@@ -4,15 +4,16 @@ import java.io.*;
 
 public final class IOUtils {
 
+    private static final ByteArrayOutputStream out = new ByteArrayOutputStream();
+
     public static String readNullTerminated(InputStream in) throws IOException {
         byte b;
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
         while((b = readByte(in)) != 0) {
             out.write(b);
         }
         out.flush();
         String read = new String(out.toByteArray());
-        out.close();
+        out.reset();
         return read;
     }
 
@@ -36,7 +37,6 @@ public final class IOUtils {
         byte b = readByte(in);
         byte c = readByte(in);
         byte d = readByte(in);
-        //return (d << 24) | (c << 16) | (b << 8) | a;
         return (a << 24) | (b << 16) | (c << 8) | d;
     }
 
@@ -46,7 +46,6 @@ public final class IOUtils {
         byte c = readByte(in);
         byte d = readByte(in);
         return (d << 24) | (c << 16) | (b << 8) | a;
-        //return a << 24 | b << 16 | c << 8 | d;
     }
 
     public static byte[] readLittleEndianIntBytes(InputStream in) throws IOException {
@@ -78,5 +77,35 @@ public final class IOUtils {
             uuid[i] = arrayToRead[index];
         }
         return uuid;
+    }
+
+    public static void writeBigEndianInt(OutputStream out, int value) throws IOException {
+        int a = (value >> 24) & 0xFF;
+        int b = (value >> 16) & 0xFF;
+        int c = (value >> 8) & 0xFF;
+        int d = value & 0xFF;
+        // result = (a << 24) | (b << 16) | (c << 8) | d
+        out.write(a);
+        out.write(b);
+        out.write(c);
+        out.write(d);
+    }
+
+    public static void writeLittleEndianInt(OutputStream out, int value) throws IOException {
+        int a = (value >> 24) & 0xFF;
+        int b = (value >> 16) & 0xFF;
+        int c = (value >> 8) & 0xFF;
+        int d = value & 0xFF;
+        // result = (d << 24) | (c << 16) | (b << 8) | a
+        out.write(d);
+        out.write(c);
+        out.write(b);
+        out.write(a);
+    }
+
+    public static void writeNullTerminatedString(OutputStream out, String value) throws IOException {
+        byte[] bytes = value.getBytes();
+        out.write(bytes);
+        out.write(0);
     }
 }

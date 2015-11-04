@@ -1,7 +1,10 @@
 package org.jglr.dmx.element;
 
 import org.jglr.dmx.Datamodel;
+import org.jglr.dmx.attributes.Attribute;
 import org.jglr.dmx.attributes.AttributeList;
+import org.jglr.dmx.attributes.AttributeValue;
+import org.jglr.dmx.attributes.EnumAttributeTypes;
 
 import java.util.UUID;
 import javax.annotation.Nullable;
@@ -15,7 +18,7 @@ public class Element extends AttributeList {
     private final boolean stub;
 
     public Element(Datamodel owner) {
-        this(owner, "Stub element", (UUID)null);
+        this(owner, "StubElement", (UUID)null);
     }
 
     public Element(Datamodel owner, String name) {
@@ -47,6 +50,30 @@ public class Element extends AttributeList {
         this.stub = stub;
     }
 
+    public Attribute createAttribute(String name) {
+        Attribute attr = new Attribute(name, this);
+        add(attr);
+        return attr;
+    }
+
+    public Attribute createAttribute(String name, EnumAttributeTypes type, Object value) {
+        Attribute attr = new Attribute(name, new AttributeValue(type, value), this);
+        add(attr);
+        return new Attribute(name, new AttributeValue(type, value), this);
+    }
+
+    public Attribute createAttribute(String name, AttributeValue value) {
+        Attribute attr = new Attribute(name, value, this);
+        add(attr);
+        return attr;
+    }
+
+    public Attribute createAttribute(String name, Object value) {
+        Attribute attr = new Attribute(name, new AttributeValue(EnumAttributeTypes.deduceType(value), value), this);
+        add(attr);
+        return attr;
+    }
+
     public String getClassName() {
         return className;
     }
@@ -65,6 +92,10 @@ public class Element extends AttributeList {
 
     public boolean isStub() {
         return stub;
+    }
+
+    public Element copyWithOwner(Datamodel newOwner) {
+        return new Element(newOwner, name, className, uuid, stub);
     }
 
     @Override

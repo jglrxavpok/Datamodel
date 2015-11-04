@@ -54,7 +54,7 @@ import static org.jglr.dmx.utils.IOUtils.*;
  };
  }</pre>
  */
-public class BinaryModelCodec extends DMXCodec {
+public class BinaryCodec extends DMXCodec {
     @Override
     public boolean supportsBinary() {
         return true;
@@ -76,8 +76,32 @@ public class BinaryModelCodec extends DMXCodec {
     }
 
     @Override
-    public byte[] encode(int encodingVersion, Datamodel model) {
-        return new byte[0];
+    public byte[] encode(int encodingVersion, Datamodel model) throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        BufferedOutputStream out = new BufferedOutputStream(baos);
+
+        // Write the header
+        // TODO: Move this somewhere else
+        String generatedHeader = String.format("<!-- dmx encoding binary %d format %s %d -->\n", encodingVersion, model.getFormat().getName(), model.getFormat().getVersion());
+        out.write(generatedHeader.getBytes());
+        out.write(0); // Write the null character
+
+        model.refreshDictionary();
+
+        // Write String Dictionary
+        int dictSize = model.getDictionary().size();
+
+        writeLittleEndianInt(out, dictSize);
+        for(int i = 0;i<dictSize;i++) {
+            writeNullTerminatedString(out, model.getDictionary().get(i));
+        }
+
+        // Write attributes
+        writeLittleEndianInt(out, 0); // TODO: TMP
+
+        out.flush();
+        out.close();
+        return baos.toByteArray();
     }
 
     @Override
@@ -85,7 +109,7 @@ public class BinaryModelCodec extends DMXCodec {
         BufferedInputStream in = new BufferedInputStream(input);
 
         // Read header
-        DMXFormat format = null;
+        DMXFormat format;
         String header = readNullTerminated(in);
 
         // TODO: Get rid of the encoding check, that needs to be done somewhere else

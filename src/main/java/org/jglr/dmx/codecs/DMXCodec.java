@@ -21,7 +21,7 @@ public abstract class DMXCodec {
 
     public abstract int[] getSupportedKeyValues2Versions();
 
-    public abstract byte[] encode(int encodingVersion, Datamodel model);
+    public abstract byte[] encode(int encodingVersion, Datamodel model) throws IOException;
 
     public abstract Datamodel decode(int encodingVersion, InputStream input) throws IOException, MalformedDMXException, UnsupportedDMXException;
 
