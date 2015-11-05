@@ -26,6 +26,8 @@ public class DMXSaveTest {
         Datamodel model = new Datamodel(new DMXFormat("model", 1));
         Element root = model.createElement("Root", "RootElement");
         root.createAttribute("MyFloat!", 0f);
+        root.createAttribute("MyAwesomeString", "Super duper awesome string");
+        model.refreshDictionary();
 
         DMXCodec codec = new BinaryCodec();
         byte[] data = codec.encode(5, model);

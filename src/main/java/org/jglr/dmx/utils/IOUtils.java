@@ -1,6 +1,10 @@
 package org.jglr.dmx.utils;
 
 import java.io.*;
+import java.nio.ByteBuffer;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.UUID;
 
 public final class IOUtils {
 
@@ -79,6 +83,26 @@ public final class IOUtils {
         return uuid;
     }
 
+    public static void writeLittleEndianUUID(OutputStream out, UUID uuid) throws IOException {
+        long idMostSigBytes = uuid.getMostSignificantBits();
+        long idLeastSigBytes = uuid.getLeastSignificantBits();
+        writeLittleEndianLong(out, idLeastSigBytes);
+        writeLittleEndianLong(out, idMostSigBytes);
+    }
+
+    public static void writeLittleEndianLong(OutputStream out, long value) throws IOException {
+        // Goes from the least significant bits to the most significants ones
+        for(int i = 0;i<8;i++) {
+            // Extracts a 8-bit segment from the 64 long value
+            byte longExtract = (byte) ((value >> i*8) & 0xFF);
+            writeByte(out, longExtract);
+        }
+    }
+
+    public static void writeByte(OutputStream out, byte value) throws IOException {
+        out.write(value);
+    }
+
     public static void writeBigEndianInt(OutputStream out, int value) throws IOException {
         int a = (value >> 24) & 0xFF;
         int b = (value >> 16) & 0xFF;
@@ -103,9 +127,27 @@ public final class IOUtils {
         out.write(a);
     }
 
+    public static void writeLittleEndianFloat(OutputStream out, float value) throws IOException {
+        writeLittleEndianInt(out, Float.floatToRawIntBits(value));
+    }
+
     public static void writeNullTerminatedString(OutputStream out, String value) throws IOException {
         byte[] bytes = value.getBytes();
         out.write(bytes);
         out.write(0);
+    }
+
+    public static UUID getUUIDFromBytes(byte[] data) {
+        assert data.length == 16 : "Data length must be 16";
+        // Adapted from UUID's private constructor UUID(byte[] data)
+        long mostSigBits = 0;
+        long leastSigBits = 0;
+        for (int i = 0;i<8;i++) {
+            mostSigBits = (mostSigBits << 8) | (data[i] & 0xFF);
+        }
+        for (int i = 8; i<16; i++) {
+            leastSigBits = (leastSigBits << 8) | (data[i] & 0xFF);
+        }
+        return new UUID(mostSigBits, leastSigBits);
     }
 }

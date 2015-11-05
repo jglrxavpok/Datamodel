@@ -1,6 +1,7 @@
-package org.jglr.dmx.attributes;
+package org.jglr.dmx.attributes.io;
 
 import org.jglr.dmx.Datamodel;
+import org.jglr.dmx.attributes.EnumAttributeTypes;
 import org.jglr.dmx.attributes.containers.*;
 import org.jglr.dmx.element.Element;
 import org.jglr.dmx.element.StubElement;
@@ -39,7 +40,7 @@ public final class AttributeExtraction {
             if(id == -1) {
                 return null;
             } else if(id == -2) {
-                return new StubElement(model, UUID.nameUUIDFromBytes(readLittleEndianUUID(in)));
+                return new StubElement(model, getUUIDFromBytes(readLittleEndianUUID(in)));
             } else {
                 return model.getElementList().get(id);
             }

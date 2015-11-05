@@ -16,7 +16,16 @@ public class AttributeValue {
             this.value = value; // We allow anything to be put here as we don't know the type
         }
         else if(value != null && !type.internalType().isAssignableFrom(value.getClass())) {
-            throw new IllegalArgumentException("value is of type "+value.getClass()+" while "+type.name());
+            if(!type.internalType().isPrimitive()) {
+                throw new IllegalArgumentException("value is of type "+value.getClass()+" while internal type is "+type.internalType());
+            } else {
+                try {
+                    this.value = value;
+                    // TODO: actually check for type
+                } catch (Exception e) {
+                    throw new IllegalArgumentException("value is of type "+value.getClass()+" while internal type is "+type.internalType()+" (tried casting)", e);
+                }
+            }
         } else {
             this.value = value;
         }

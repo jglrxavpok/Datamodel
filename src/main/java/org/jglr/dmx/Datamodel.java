@@ -2,6 +2,7 @@ package org.jglr.dmx;
 
 import org.jglr.dmx.attributes.Attribute;
 import org.jglr.dmx.attributes.AttributeList;
+import org.jglr.dmx.attributes.EnumAttributeTypes;
 import org.jglr.dmx.codecs.DMXCodec;
 import org.jglr.dmx.element.Element;
 import org.jglr.dmx.element.ElementList;
@@ -125,6 +126,12 @@ public class Datamodel {
         list.stream()
                 .map(Attribute::getName)
                 .forEach(this::addToDictIfNotPresent);
+
+        list.forEach(attr -> {
+            if(attr.getValue().getType() == EnumAttributeTypes.STRING) {
+                addToDictIfNotPresent((String) attr.getValue().getValue());
+            }
+        });
     }
 
     private void addToDictIfNotPresent(String val) {
@@ -135,5 +142,9 @@ public class Datamodel {
     @Override
     public String toString() {
         return "Datamodel(codec="+codec+", format="+format.toString()+", dictionarySize="+dictionary.size()+")";
+    }
+
+    public int getStrIndex(String str) {
+        return dictionary.indexOf(str);
     }
 }

@@ -96,8 +96,31 @@ public class BinaryCodec extends DMXCodec {
             writeNullTerminatedString(out, model.getDictionary().get(i));
         }
 
-        // Write attributes
-        writeLittleEndianInt(out, 0); // TODO: TMP
+        // Write elements
+        int elemCount = model.getElementList().size();
+        writeLittleEndianInt(out, elemCount);
+
+        // Write element headers
+        for(Element elem : model.getElementList()) {
+            int nameIndex = model.getStrIndex(elem.getName());
+            int classNameIndex = model.getStrIndex(elem.getClassName());
+            writeLittleEndianInt(out, nameIndex);
+            writeLittleEndianInt(out, classNameIndex);
+            writeLittleEndianUUID(out, elem.getUuid());
+        }
+
+        // Write element bodies
+        for(Element elem : model.getElementList()) {
+            writeLittleEndianInt(out, elem.size());
+            for(Attribute attribute : elem) {
+                int nameIndex = model.getStrIndex(attribute.getName());
+                EnumAttributeTypes type = attribute.getValue().getType();
+                writeLittleEndianInt(out, nameIndex);
+                writeByte(out, (byte) type.value());
+                System.out.println(type+" "+attribute.getName());
+                type.write(model, out, attribute.getValue().getValue());
+            }
+        }
 
         out.flush();
         out.close();
@@ -191,7 +214,7 @@ public class BinaryCodec extends DMXCodec {
         int className = readLittleEndianInt(in);
         int name = readLittleEndianInt(in);
         byte[] uuid = readLittleEndianUUID(in);
-        Element element = new Element(datamodel, dictionary[name], dictionary[className], UUID.nameUUIDFromBytes(uuid));
+        Element element = new Element(datamodel, dictionary[name], dictionary[className], getUUIDFromBytes(uuid));
         DMX.debug(element.toString());
         return element;
     }
