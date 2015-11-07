@@ -26,6 +26,8 @@ public class DMXSaveTest {
         Datamodel model = new Datamodel(new DMXFormat("model", 1));
         Element root = model.createElement("Root", "RootElement");
         root.createAttribute("MyFloat!", 0f);
+        root.createAttribute("String array", new String[] {"a","b","c"});
+        root.createAttribute("FloatArray!", new float[] {0f,1f,2f});
         root.createAttribute("MyAwesomeString", "Super duper awesome string");
         model.refreshDictionary();
 

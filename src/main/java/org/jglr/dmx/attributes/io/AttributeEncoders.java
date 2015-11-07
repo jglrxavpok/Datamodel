@@ -177,7 +177,11 @@ public final class AttributeEncoders {
     public static void encodeStringArray(Datamodel model, OutputStream out, Object value) throws IOException {
         check(value, String[].class);
         Objects.requireNonNull(value);
-        encodeArray(model, out, EnumAttributeTypes.STRING, (String[]) value);
+        String[] arr = (String[]) value;
+        writeLittleEndianInt(out, arr.length);
+        for (String s : arr) {
+            writeNullTerminatedString(out, s);
+        }
     }
 
     public static void encodeBoolArray(Datamodel model, OutputStream out, Object value) throws IOException {
@@ -186,8 +190,8 @@ public final class AttributeEncoders {
         // Sadly, primitives types arrays are not an instance of Object[]
         boolean[] array = (boolean[]) value;
         writeLittleEndianInt(out, array.length);
-        for(int i = 0;i<array.length;i++) {
-            writeByte(out, (byte) (array[i] ? 1 : 0));
+        for (boolean b : array) {
+            writeByte(out, (byte) (b ? 1 : 0));
         }
     }
 
@@ -197,8 +201,8 @@ public final class AttributeEncoders {
         // Sadly, primitives types arrays are not an instance of Object[]
         float[] array = (float[]) value;
         writeLittleEndianInt(out, array.length);
-        for(int i = 0;i<array.length;i++) {
-            writeLittleEndianFloat(out, array[i]);
+        for (float f : array) {
+            writeLittleEndianFloat(out, f);
         }
     }
 
@@ -208,8 +212,8 @@ public final class AttributeEncoders {
         // Sadly, primitives types arrays are not an instance of Object[]
         int[] array = (int[]) value;
         writeLittleEndianInt(out, array.length);
-        for(int i = 0;i<array.length;i++) {
-            writeLittleEndianInt(out, array[i]);
+        for (int i : array) {
+            writeLittleEndianInt(out, i);
         }
     }
 

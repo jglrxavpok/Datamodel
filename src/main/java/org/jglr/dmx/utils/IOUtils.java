@@ -2,8 +2,6 @@ package org.jglr.dmx.utils;
 
 import java.io.*;
 import java.nio.ByteBuffer;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.UUID;
 
 public final class IOUtils {
@@ -22,7 +20,9 @@ public final class IOUtils {
     }
 
     public static float readFloat(InputStream in) throws IOException {
-        return Float.intBitsToFloat(readBigEndianInt(in));
+        ByteBuffer buffer = ByteBuffer.wrap(readLittleEndianIntBytes(in));
+        // TODO: Find more efficient way to read floats
+        return buffer.getFloat();
     }
 
     public static boolean readBool(InputStream in) throws IOException {
