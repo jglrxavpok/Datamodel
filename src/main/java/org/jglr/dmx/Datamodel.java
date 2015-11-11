@@ -139,6 +139,24 @@ public class Datamodel {
             dictionary.add(val);
     }
 
+    public Element getElementByClass(String className) {
+        return getElementList().stream()
+                .filter(e -> className.equals(e.getClassName()))
+                .findFirst()
+                .orElse(null);
+    }
+
+    public Element getElement(String name) {
+        return getElement(name, null);
+    }
+
+    public Element getElement(String name, @Nullable String className) {
+        return getElementList().stream()
+                .filter(e -> e.getName().equals(name) && (className == null || className.equals(e.getClassName())))
+                .findFirst()
+                .orElse(null);
+    }
+
     @Override
     public String toString() {
         return "Datamodel(codec="+codec+", format="+format.toString()+", dictionarySize="+dictionary.size()+")";
