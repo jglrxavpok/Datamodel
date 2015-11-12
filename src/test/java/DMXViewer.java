@@ -9,7 +9,6 @@ import javax.swing.tree.DefaultTreeModel;
 import java.awt.*;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 public class DMXViewer {
@@ -82,7 +81,7 @@ public class DMXViewer {
                 elementNode.add(attrNode);
 
                 if(attr.getValue() != null) {
-                    DefaultMutableTreeNode valueNode = new DefaultMutableTreeNode(attr.getValue().getType().name()+": "+DMX.toString(attr.getValue().getValue()));
+                    DefaultMutableTreeNode valueNode = new DefaultMutableTreeNode(attr.getValue().getType().name()+": "+DMX.toString(attr.getValue().getRawValue()));
 
                     attrNode.add(valueNode);
                 }

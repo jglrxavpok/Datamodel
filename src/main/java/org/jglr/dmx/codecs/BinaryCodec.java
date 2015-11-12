@@ -8,8 +8,6 @@ import org.jglr.dmx.element.Element;
 import org.jglr.dmx.formats.DMXFormat;
 
 import java.io.*;
-import java.util.Arrays;
-import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -118,7 +116,7 @@ public class BinaryCodec extends DMXCodec {
                 writeLittleEndianInt(out, nameIndex);
                 writeByte(out, (byte) type.value());
                 System.out.println(type+" "+attribute.getName());
-                type.write(model, out, attribute.getValue().getValue());
+                type.write(model, out, attribute.getValue().getRawValue());
             }
         }
 
@@ -190,7 +188,7 @@ public class BinaryCodec extends DMXCodec {
                 AttributeValue value = type.extract(datamodel, in);
                 Attribute attribute = new Attribute(name, value, elem);
                 elem.add(attribute);
-                String strValue = DMX.toString(value.getValue());
+                String strValue = DMX.toString(value.getRawValue());
                 DMX.debug("Attribute("+i+"): "+name+" = "+strValue);
             }
         }

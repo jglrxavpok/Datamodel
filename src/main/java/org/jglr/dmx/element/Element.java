@@ -94,6 +94,13 @@ public class Element extends AttributeList {
         return stub;
     }
 
+    public Attribute getAttribute(String name) {
+        return stream()
+                .filter(a -> a.getName().equals(name))
+                .findFirst()
+                .orElse(null);
+    }
+
     public Element copyWithOwner(Datamodel newOwner) {
         return new Element(newOwner, name, className, uuid, stub);
     }

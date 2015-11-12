@@ -129,7 +129,7 @@ public class Datamodel {
 
         list.forEach(attr -> {
             if(attr.getValue().getType() == EnumAttributeTypes.STRING) {
-                addToDictIfNotPresent((String) attr.getValue().getValue());
+                addToDictIfNotPresent((String) attr.getValue().getRawValue());
             }
         });
     }

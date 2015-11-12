@@ -35,7 +35,7 @@ public class AttributeValue {
         return type;
     }
 
-    public Object getValue() {
+    public Object getRawValue() {
         return value;
     }
 

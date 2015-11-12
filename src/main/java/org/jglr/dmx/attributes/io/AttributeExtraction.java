@@ -8,7 +8,6 @@ import org.jglr.dmx.element.StubElement;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.UUID;
 
 import static org.jglr.dmx.utils.IOUtils.*;
 
@@ -435,7 +434,7 @@ public final class AttributeExtraction {
     @SuppressWarnings("unchecked")
     private static <T> void readAttributeArray(Datamodel model, InputStream in, EnumAttributeTypes attrType, T[] out) {
         for(int i = 0;i<out.length;i++) {
-            out[i] = (T) attrType.extract(model, in).getValue();
+            out[i] = (T) attrType.extract(model, in).getRawValue();
         }
     }
 
