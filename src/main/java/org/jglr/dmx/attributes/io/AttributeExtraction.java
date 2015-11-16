@@ -8,6 +8,7 @@ import org.jglr.dmx.element.StubElement;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.UUID;
 
 import static org.jglr.dmx.utils.IOUtils.*;
 
@@ -114,7 +115,7 @@ public final class AttributeExtraction {
      */
     public static int extractCChar(Datamodel model, InputStream in) {
         try {
-            return readByte(in);
+            return readUnsignedByte(in);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -273,10 +274,10 @@ public final class AttributeExtraction {
                 result[i] = arr[i];
             }
             return result;
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
-        return null;
+        return new int[0];
     }
 
     /**
@@ -350,7 +351,8 @@ public final class AttributeExtraction {
      */
     public static Vector3[] extractVector3Array(Datamodel model, InputStream in) {
         try {
-            Vector3[] arr = new Vector3[readLittleEndianInt(in)];
+            int size = readLittleEndianInt(in);
+            Vector3[] arr = new Vector3[size];
             readAttributeArray(model, in, EnumAttributeTypes.VECTOR3, arr);
             return arr;
         } catch (IOException e) {
@@ -438,4 +440,51 @@ public final class AttributeExtraction {
         }
     }
 
+    public static UUID[] extractUUIDArray(Datamodel datamodel, InputStream in) {
+        try {
+            UUID[] arr = new UUID[readLittleEndianInt(in)];
+            for(int i = 0;i<arr.length;i++) {
+                arr[i] = getUUIDFromBytes(readLittleEndianUUID(in));
+            }
+            return arr;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static byte[] extractVoid(Datamodel model, InputStream in) {
+        try {
+            byte[] result = new byte[readLittleEndianInt(in)];
+            for(int i = 0;i<result.length;i++) {
+                result[i] = readByte(in);
+            }
+            return result;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return new byte[0];
+    }
+
+    public static byte[][] extractVoidArray(Datamodel model, InputStream in) {
+        try {
+            byte[][] result = new byte[readLittleEndianInt(in)][];
+            for(int i = 0;i<result.length;i++) {
+                result[i] = extractVoid(model, in);
+            }
+            return result;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return new byte[0][0];
+    }
+
+    public static Object extractUnknown(Datamodel model, InputStream in) {
+        try {
+            readUnsignedByte(in);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }

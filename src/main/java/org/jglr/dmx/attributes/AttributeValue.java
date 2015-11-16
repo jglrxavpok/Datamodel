@@ -11,7 +11,7 @@ public class AttributeValue {
     public AttributeValue(EnumAttributeTypes type, Object value) {
         this.type = type;
         if(value == null && type != EnumAttributeTypes.VOID) {
-            throw new NullPointerException("value");
+            throw new NullPointerException("value "+type);
         } else if(type == EnumAttributeTypes.UNKNOWN) {
             this.value = value; // We allow anything to be put here as we don't know the type
         }

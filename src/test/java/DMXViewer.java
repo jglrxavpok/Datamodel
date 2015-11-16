@@ -16,6 +16,7 @@ public class DMXViewer {
     private static BinaryCodec codec;
 
     public static void main(String[] args) {
+        DMX.debug = true;
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception e) {

@@ -8,15 +8,18 @@ import org.jglr.dmx.element.Element;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Objects;
+import java.util.UUID;
 
 import static org.jglr.dmx.utils.IOUtils.*;
 
 public final class AttributeEncoders {
 
     /**
-     * Writes nothing to the OutputStream, used for VOID and UNKNOWN types mainly
+     * Writes nothing to the OutputStream, used by UNKNOWN type mainly
      */
-    public static final AttributeEncoder nullEncoder = (model, out, value) -> {};
+    public static final AttributeEncoder nullEncoder = (model, out, value) -> {
+        writeByte(out, (byte) -1);
+    };
 
     public static void encodeElement(Datamodel model, OutputStream out, Object value) throws IOException {
         check(value, Element.class);
@@ -174,6 +177,16 @@ public final class AttributeEncoders {
         encodeArray(model, out, EnumAttributeTypes.VECTOR4, (Vector4[]) value);
     }
 
+    public static void encodeUUIDArray(Datamodel model, OutputStream out, Object value) throws IOException {
+        check(value, UUID[].class);
+        Objects.requireNonNull(value);
+        UUID[] arr = (UUID[]) value;
+        writeLittleEndianInt(out, arr.length);
+        for (UUID uuid : arr) {
+            writeLittleEndianUUID(out, uuid);
+        }
+    }
+
     public static void encodeStringArray(Datamodel model, OutputStream out, Object value) throws IOException {
         check(value, String[].class);
         Objects.requireNonNull(value);
@@ -241,5 +254,13 @@ public final class AttributeEncoders {
             typesStr += "Void";
             throw new IllegalArgumentException("value is not of any of those types "+typesStr);
         }
+    }
+
+    public static void encodeVoid(Datamodel datamodel, OutputStream outputStream, Object o) {
+        throw new UnsupportedOperationException(); // TODO
+    }
+
+    public static void encodeVoidArray(Datamodel datamodel, OutputStream outputStream, Object o) {
+        throw new UnsupportedOperationException(); // TODO
     }
 }

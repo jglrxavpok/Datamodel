@@ -9,8 +9,8 @@ public final class IOUtils {
     private static final ByteArrayOutputStream out = new ByteArrayOutputStream();
 
     public static String readNullTerminated(InputStream in) throws IOException {
-        byte b;
-        while((b = readByte(in)) != 0) {
+        int b;
+        while((b = readUnsignedByte(in)) != 0) {
             out.write(b);
         }
         out.flush();
@@ -26,7 +26,7 @@ public final class IOUtils {
     }
 
     public static boolean readBool(InputStream in) throws IOException {
-        return readByte(in) != 0;
+        return readUnsignedByte(in) != 0;
     }
 
     public static byte readByte(InputStream in) throws IOException {
@@ -36,27 +36,34 @@ public final class IOUtils {
         return (byte)val;
     }
 
+    public static int readUnsignedByte(InputStream in) throws IOException {
+        int val = in.read();
+        if(val < 0)
+            throw new EOFException();
+        return val & 0xFF;
+    }
+
     public static int readBigEndianInt(InputStream in) throws IOException {
-        byte a = readByte(in);
-        byte b = readByte(in);
-        byte c = readByte(in);
-        byte d = readByte(in);
+        int a = readUnsignedByte(in);
+        int b = readUnsignedByte(in);
+        int c = readUnsignedByte(in);
+        int d = readUnsignedByte(in);
         return (a << 24) | (b << 16) | (c << 8) | d;
     }
 
     public static int readLittleEndianInt(InputStream in) throws IOException {
-        byte a = readByte(in);
-        byte b = readByte(in);
-        byte c = readByte(in);
-        byte d = readByte(in);
+        int a = readUnsignedByte(in);
+        int b = readUnsignedByte(in);
+        int c = readUnsignedByte(in);
+        int d = readUnsignedByte(in);
         return (d << 24) | (c << 16) | (b << 8) | a;
     }
 
     public static byte[] readLittleEndianIntBytes(InputStream in) throws IOException {
-        byte a = readByte(in);
-        byte b = readByte(in);
-        byte c = readByte(in);
-        byte d = readByte(in);
+        byte a = (byte) readUnsignedByte(in);
+        byte b = (byte) readUnsignedByte(in);
+        byte c = (byte) readUnsignedByte(in);
+        byte d = (byte) readUnsignedByte(in);
         return new byte[] { d, c, b, a};
     }
 

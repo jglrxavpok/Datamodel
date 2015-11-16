@@ -133,6 +133,8 @@ public class BinaryCodec extends DMXCodec {
         DMXFormat format;
         String header = readNullTerminated(in);
 
+        DMX.debug("Read header: "+header);
+
         // TODO: Get rid of the encoding check, that needs to be done somewhere else
         String headerRegex = Pattern.quote("<!-- dmx encoding binary ")+"([0-9]*?)"+Pattern.quote(" format ")+"(.*?) ([0-9]*?)"+Pattern.quote(" -->");
         Pattern pattern = Pattern.compile(headerRegex);
@@ -184,7 +186,8 @@ public class BinaryCodec extends DMXCodec {
             for(int i = 0;i<attributeCount;i++) {
                 // Read a single attribute
                 String name = dictionary[readLittleEndianInt(in)];
-                EnumAttributeTypes type = EnumAttributeTypes.getType(readByte(in));
+                EnumAttributeTypes type = EnumAttributeTypes.getType(readUnsignedByte(in));
+                DMX.debug("Attribute("+i+"): "+name+" type: "+type.name());
                 AttributeValue value = type.extract(datamodel, in);
                 Attribute attribute = new Attribute(name, value, elem);
                 elem.add(attribute);
